@@ -4,24 +4,26 @@ defmodule Ueberauth.Strategy.Bungie do
   """
   use Ueberauth.Strategy, scope: ""
 
-  alias Ueberauth.Strategy.Bungie
-  alias Ueberauth.Auth.{Info,Credentials,Extra}
+  alias Ueberauth.Auth.{Info, Credentials, Extra}
 
   def handle_request!(conn) do
-    opts = []
-    
-    redirect!(conn, Bungie.OAuth.authorize_url!(opts))
+    opts =
+      []
+      |> Keyword.put(:redirect_uri, callback_url(conn))
+
+    redirect!(conn, Ueberauth.Strategy.Bungie.OAuth.authorize_url!(opts))
   end
 
   def handle_callback!(%Plug.Conn{params: %{"code" => code}} = conn) do
     params = [code: code]
     opts = [redirect_uri: callback_url(conn)]
 
-    case Bungie.OAuth.get_access_token(params, opts) do
+    case Ueberauth.Strategy.Bungie.OAuth.get_access_token(params, opts) do
       {:ok, token} ->
         fetch_user(conn, token)
+
       {:error, {error_code, error_description}} ->
-        set_errors!(conn, [error(error_code, error_description)])      
+        set_errors!(conn, [error(error_code, error_description)])
     end
   end
 
@@ -47,10 +49,13 @@ defmodule Ueberauth.Strategy.Bungie do
     case resp do
       {:ok, %OAuth2.Response{status_code: 401, body: _body}} ->
         set_errors!(conn, [error("token", "unauthorized")])
+
       {:ok, %OAuth2.Response{status_code: status_code, body: user}} when status_code in 200..399 ->
         put_private(conn, :google_user, user)
+
       {:error, %OAuth2.Response{status_code: status_code}} ->
         set_errors!(conn, [error("OAuth2", status_code)])
+
       {:error, %OAuth2.Error{reason: reason}} ->
         set_errors!(conn, [error("OAuth2", reason)])
     end

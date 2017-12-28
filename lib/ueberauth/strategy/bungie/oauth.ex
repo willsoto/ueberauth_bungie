@@ -4,17 +4,19 @@ defmodule Ueberauth.Strategy.Bungie.OAuth do
   @defaults [
     strategy: __MODULE__,
     client_id: System.get_env("BUNGIE_CLIENT_ID"),
-    client_secret: System.get_env("BUNGIE_CLIENT_SECRET"),
+    # TODO: how to generate this?
+    # state: "",
     redirect_uri: System.get_env("BUNGIE_OAUTH_REDIRECT_URI"),
     site: "https://www.bungie.net/Platform",
-    authorize_url: System.get_env("BUNGIE_OAUTH_AUTHORIZATION_URL"),
-    token_url: System.get_env("BUNGIE_OAUTH_TOKEN_URL")
+    authorize_url: "https://www.bungie.net/en/oauth/authorize",
+    token_url: "https://www.bungie.net/platform/app/oauth/token/",
+    callback_methods: ["POST"]
   ]
 
   def client(opts \\ []) do
-    config = Application.get_env(:ueberauth, Ueberauth.Strategy.Bungie.OAuth, [])
+    config = Application.get_env(:ueberauth, Ueberauth.Strategy.Bungie.OAuth)
 
-    opts = 
+    opts =
       @defaults
       |> Keyword.merge(config)
       |> Keyword.merge(opts)
@@ -42,9 +44,11 @@ defmodule Ueberauth.Strategy.Bungie.OAuth do
     case opts |> client |> OAuth2.Client.get_token(params) do
       {:error, %{body: %{"error" => error, "error_description" => description}}} ->
         {:error, {error, description}}
+
       {:ok, %{token: %{access_token: nil} = token}} ->
         %{"error" => error, "error_description" => description} = token.other_params
         {:error, {error, description}}
+
       {:ok, %{token: token}} ->
         {:ok, token}
     end
