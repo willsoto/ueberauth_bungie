@@ -9,7 +9,7 @@ defmodule UeberauthBungie.Mixfile do
       app: :ueberauth_bungie,
       version: @version,
       elixir: "~> 1.5",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       source_url: @url,
       homepage_url: @url,
@@ -44,9 +44,11 @@ defmodule UeberauthBungie.Mixfile do
   end
 
   defp package do
-    [files: ["lib", "mix.exs", "README.md", "LICENSE"],
-     maintainers: ["Will Soto"],
-     licenses: ["Apache 2.0"],
-     links: %{"GitHub": @url}]
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      maintainers: ["Will Soto"],
+      licenses: ["Apache 2.0"],
+      links: %{GitHub: @url}
+    ]
   end
 end
