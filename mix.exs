@@ -50,7 +50,7 @@ defmodule UeberauthBungie.Mixfile do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      files: ["lib", "mix.exs", "README.md", "LICENSE", "VERSION"],
       maintainers: ["Will Soto"],
       licenses: ["Apache 2.0"],
       links: %{GitHub: @url}
