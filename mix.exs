@@ -1,7 +1,7 @@
 defmodule UeberauthBungie.Mixfile do
   use Mix.Project
 
-  @version "0.1.0"
+  @version String.trim(File.read!("VERSION"))
   @url "https://github.com/willsoto/ueberauth_bungie"
 
   def project do
@@ -35,7 +35,8 @@ defmodule UeberauthBungie.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test]},
       {:exvcr, "~> 0.9.0", only: [:test]},
       {:earmark, ">= 0.0.0", only: :dev},
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:eliver, "~> 2.0.0", only: :dev, runtime: false}
     ]
   end
 
