@@ -1,6 +1,7 @@
 # Überauth Bungie
 
 [![Hex Version](https://img.shields.io/hexpm/v/ueberauth_bungie.svg)](https://hex.pm/packages/ueberauth_bungie)
+[![CircleCI](https://circleci.com/gh/willsoto/ueberauth_bungie/tree/master.svg?style=svg&circle-token=1121656241eba82bacba9901e3e4086bc588dd2d)](https://circleci.com/gh/willsoto/ueberauth_bungie/tree/master)
 
 > Bungie Oauth2 strategy for Überauth.
 
