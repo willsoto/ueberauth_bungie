@@ -2,9 +2,13 @@ defmodule Ueberauth.Strategy.Bungie do
   @moduledoc """
   Bungie Strategy for Ueberauth
   """
-  use Ueberauth.Strategy, scope: ""
+  use Ueberauth.Strategy, oauth2_module: Ueberauth.Strategy.Bungie.OAuth
 
   alias Ueberauth.Auth.{Info, Credentials, Extra}
+
+  def uid(conn) do
+    conn.private.bungie_user["Response"]["membershipId"]
+  end
 
   def handle_request!(conn) do
     opts =
@@ -28,22 +32,41 @@ defmodule Ueberauth.Strategy.Bungie do
   end
 
   def credentials(conn) do
-    %Credentials{}
+    token = conn.private.bungie_token
+
+    %Credentials{
+      token: token.access_token,
+      refresh_token: token.refresh_token,
+      expires_at: token.expires_at,
+      token_type: token.token_type,
+      expires: !!token.expires_at,
+      scopes: nil
+    }
   end
 
   def info(conn) do
-    %Info{}
+    user = conn.private.bungie_user["Response"]
+
+    %Info{
+      name: user["displayName"],
+      location: user["locale"]
+    }
   end
 
   def extra(conn) do
-    %Extra{}
+    %Extra{
+      raw_info: conn.private.bungie_user["Response"]
+    }
   end
 
   defp fetch_user(conn, token) do
     conn = put_private(conn, :bungie_token, token)
 
     # @todo Figure out if this is the right endpoint
-    path = "https://www.bungie.net/platform/app/oauth/token/"
+    path =
+      "https://www.bungie.net/Platform/User/GetBungieNetUserById/" <>
+        token.other_params["membership_id"] <> "/"
+
     resp = Ueberauth.Strategy.Bungie.OAuth.get(token, path)
 
     case resp do
@@ -51,7 +74,7 @@ defmodule Ueberauth.Strategy.Bungie do
         set_errors!(conn, [error("token", "unauthorized")])
 
       {:ok, %OAuth2.Response{status_code: status_code, body: user}} when status_code in 200..399 ->
-        put_private(conn, :google_user, user)
+        put_private(conn, :bungie_user, user)
 
       {:error, %OAuth2.Response{status_code: status_code}} ->
         set_errors!(conn, [error("OAuth2", status_code)])
@@ -59,17 +82,5 @@ defmodule Ueberauth.Strategy.Bungie do
       {:error, %OAuth2.Error{reason: reason}} ->
         set_errors!(conn, [error("OAuth2", reason)])
     end
-  end
-
-  defp with_param(opts, key, conn) do
-    if value = conn.params[to_string(key)], do: Keyword.put(opts, key, value), else: opts
-  end
-
-  defp with_optional(opts, key, conn) do
-    if option(conn, key), do: Keyword.put(opts, key, option(conn, key)), else: opts
-  end
-
-  defp option(conn, key) do
-    Keyword.get(options(conn), key, Keyword.get(default_options(), key))
   end
 end

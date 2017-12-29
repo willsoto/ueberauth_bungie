@@ -10,16 +10,22 @@ defmodule Ueberauth.Strategy.Bungie.OAuth do
     site: "https://www.bungie.net/Platform",
     authorize_url: "https://www.bungie.net/en/oauth/authorize",
     token_url: "https://www.bungie.net/platform/app/oauth/token/",
-    callback_methods: ["POST"]
+    token_method: :post
   ]
 
   def client(opts \\ []) do
-    config = Application.get_env(:ueberauth, Ueberauth.Strategy.Bungie.OAuth)
+    config =
+      :ueberauth
+      |> Application.fetch_env!(Ueberauth.Strategy.Bungie.OAuth)
+      |> check_config_key_exists(:client_id)
+      |> check_config_key_exists(:api_key)
+      |> check_config_key_exists(:redirect_uri)
 
     opts =
       @defaults
       |> Keyword.merge(config)
       |> Keyword.merge(opts)
+      |> Keyword.merge(headers: ["X-API-Key": config[:api_key]])
 
     OAuth2.Client.new(opts)
   end
@@ -65,5 +71,17 @@ defmodule Ueberauth.Strategy.Bungie.OAuth do
     |> put_param("client_secret", client.client_secret)
     |> put_header("Accept", "application/json")
     |> OAuth2.Strategy.AuthCode.get_token(params, headers)
+  end
+
+  defp check_config_key_exists(config, key) when is_list(config) do
+    unless Keyword.has_key?(config, key) do
+      raise "#{inspect(key)} missing from config :ueberauth, Ueberauth.Strategy.Bungie"
+    end
+
+    config
+  end
+
+  defp check_config_key_exists(_, _) do
+    raise "Config :ueberauth, Ueberauth.Strategy.Bungie is not a keyword list, as expected"
   end
 end
