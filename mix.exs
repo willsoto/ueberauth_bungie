@@ -15,7 +15,8 @@ defmodule UeberauthBungie.Mixfile do
       homepage_url: @url,
       docs: docs(),
       package: package(),
-      description: description()
+      description: description(),
+      aliases: aliases()
     ]
   end
 
@@ -31,6 +32,9 @@ defmodule UeberauthBungie.Mixfile do
     [
       {:ueberauth, "~> 0.4"},
       {:oauth2, "~> 0.9"},
+      {:credo, "~> 0.8", only: [:dev, :test]},
+      {:exvcr, "~> 0.9.0", only: [:test]},
+      {:earmark, ">= 0.0.0", only: :dev},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false}
     ]
   end
@@ -49,6 +53,12 @@ defmodule UeberauthBungie.Mixfile do
       maintainers: ["Will Soto"],
       licenses: ["Apache 2.0"],
       links: %{GitHub: @url}
+    ]
+  end
+
+  defp aliases do
+    [
+      ci: ["credo", "test"]
     ]
   end
 end

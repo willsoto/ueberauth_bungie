@@ -1,4 +1,7 @@
 defmodule Ueberauth.Strategy.Bungie.OAuth do
+  @moduledoc """
+  Oauth2 Strategy for Bungie
+  """
   use OAuth2.Strategy
 
   @defaults [

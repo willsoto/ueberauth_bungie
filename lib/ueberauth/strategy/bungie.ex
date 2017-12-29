@@ -31,6 +31,19 @@ defmodule Ueberauth.Strategy.Bungie do
     end
   end
 
+  @doc false
+  def handle_callback!(conn) do
+    set_errors!(conn, [error("missing_code", "No code received")])
+  end
+
+  @doc """
+  Cleans up the private area of the connection used for passing the raw Gitlab response around during the callback.
+  """
+  def handle_cleanup!(conn) do
+    conn
+    |> put_private(:bungie_user, nil)
+  end
+
   def credentials(conn) do
     token = conn.private.bungie_token
 
@@ -62,7 +75,6 @@ defmodule Ueberauth.Strategy.Bungie do
   defp fetch_user(conn, token) do
     conn = put_private(conn, :bungie_token, token)
 
-    # @todo Figure out if this is the right endpoint
     path =
       "https://www.bungie.net/Platform/User/GetBungieNetUserById/" <>
         token.other_params["membership_id"] <> "/"
