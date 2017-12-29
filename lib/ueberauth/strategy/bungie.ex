@@ -52,7 +52,7 @@ defmodule Ueberauth.Strategy.Bungie do
       refresh_token: token.refresh_token,
       expires_at: token.expires_at,
       token_type: token.token_type,
-      expires: !!token.expires_at,
+      expires: present?(token.expires_at),
       scopes: nil
     }
   end
@@ -95,4 +95,8 @@ defmodule Ueberauth.Strategy.Bungie do
         set_errors!(conn, [error("OAuth2", reason)])
     end
   end
+
+  defp present?(nil), do: false
+  defp present?(false), do: false
+  defp present?(_), do: true
 end
