@@ -59,7 +59,8 @@ defmodule UeberauthBungie.Mixfile do
 
   defp aliases do
     [
-      ci: ["credo", "test"]
+      ci: ["credo", "test"],
+      release: ["eliver.bump", "hex.publish"]
     ]
   end
 end
