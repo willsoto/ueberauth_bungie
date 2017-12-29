@@ -1,5 +1,7 @@
 # Überauth Bungie
 
+[![Hex Version](https://img.shields.io/hexpm/v/ueberauth_bungie.svg)](https://hex.pm/packages/ueberauth_bungie)
+
 > Bungie Oauth2 strategy for Überauth.
 
 ## Installation
