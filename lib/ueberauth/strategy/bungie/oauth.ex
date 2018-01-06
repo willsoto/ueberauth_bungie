@@ -6,10 +6,8 @@ defmodule Ueberauth.Strategy.Bungie.OAuth do
 
   @defaults [
     strategy: __MODULE__,
-    client_id: System.get_env("BUNGIE_CLIENT_ID"),
     # TODO: how to generate this?
     # state: "",
-    redirect_uri: System.get_env("BUNGIE_OAUTH_REDIRECT_URI"),
     site: "https://www.bungie.net/Platform",
     authorize_url: "https://www.bungie.net/en/oauth/authorize",
     token_url: "https://www.bungie.net/platform/app/oauth/token/",
