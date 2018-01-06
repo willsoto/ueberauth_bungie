@@ -7,4 +7,8 @@ config :ueberauth, Ueberauth,
     bungie: {Ueberauth.Strategy.Bungie, []}
   ]
 
-import_config "dev.secret.exs"
+try do
+  import_config "#{Mix.env()}.secret.exs"
+rescue
+  _ -> IO.puts("Secret not found for #{Mix.env()}")
+end
