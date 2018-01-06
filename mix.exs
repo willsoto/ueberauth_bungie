@@ -59,7 +59,7 @@ defmodule UeberauthBungie.Mixfile do
 
   defp aliases do
     [
-      "release": ["eliver.bump", "hex.publish"]
+      release: ["eliver.bump", "hex.publish"]
     ]
   end
 end

@@ -19,7 +19,8 @@ defmodule UeberauthBungieTest do
 
   describe "credentials/1" do
     test "returns the correct struct" do
-      now = DateTime.to_iso8601(DateTime.utc_now)
+      now = DateTime.to_iso8601(DateTime.utc_now())
+
       token = %{
         access_token: "12345",
         refresh_token: "45678",
